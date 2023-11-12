@@ -17,8 +17,15 @@ app.get("/get", async (req, res) => {
 //To add values to the storage
 app.post("/add", async (req, res) => {
   const { items } = req.body;
-  const resp = await storage.setItem(items, { items });
-  res.status(201).send({ message: "Task added", resp });
+  try {
+    if (!items) {
+      return res.status(400).send({ message: "Task must be added" });
+    }
+    const resp = await storage.setItem(items, { items });
+    res.status(201).send({ message: "Task added", resp });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
 });
 
 //To clear the storage while restarting the node
